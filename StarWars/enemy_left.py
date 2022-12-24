@@ -27,6 +27,8 @@ class Enemy_left(pygame.sprite.Sprite):
         self.snd_expl = pygame.mixer.Sound(snd_dir + "expl.mp3")
         self.snd_expl.set_volume(0.1)
 
+        self.hp = 100
+
     def rotate(self, rotate_speed):
         self.direction.rotate_ip(-rotate_speed)
         self.angle += rotate_speed

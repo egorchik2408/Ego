@@ -12,7 +12,7 @@ img_dir = 'media/img/'
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load(img_dir+ 'player/player.png')
+        self.image = pygame.image.load(img_dir + 'player/player.png')
         self.rect = self.image.get_rect()
         self.rect.x = width/2
         self.rect.y = height/2
@@ -29,6 +29,8 @@ class Player(pygame.sprite.Sprite):
         self.snd_shoot.set_volume(0.1)
         self.snd_scratch = pygame.mixer.Sound(snd_dir + "scratch.mp3")
         self.snd_scratch.set_volume(0.1)
+
+        self.hp = 500
 
     def rotate(self, rotate_speed):
         self.direction.rotate_ip(-rotate_speed)

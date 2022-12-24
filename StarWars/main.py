@@ -5,11 +5,20 @@ from enemy_left import Enemy_left
 from enemy_top import Enemy_top
 from enemy_right import Enemy_right
 from bullet import Bullet
+from explosion import Explosion
 
 def get_hit_sprite(hits_dict):
     for hit in hits_dict.values():
         return hit[0]
+def draw_hp(screen, x, y, hp, hp_width, hp_height):  # Функция для рисования hp
+   color = "#32CD32"                                 # Зеленый цвет
+   white = "#FFFFFF"                                 # Белый цвет
+   rect = pygame.Rect(x, y, hp_width, hp_height)     # Создаем рамку
+   fill = (hp / 500) * hp_width                      # Считаем ширину полосы для hp
+   fill_rect = pygame.Rect(x, y, fill, hp_height)    # Cоздаем полосу для hp
 
+   pygame.draw.rect(screen, color, fill_rect)        # Рисуем полосу для hp
+   pygame.draw.rect(screen, white, rect, 1)          # Рисуем рамку
 
 pygame.init()
 
@@ -70,15 +79,27 @@ while run:
                 all_sprites.add(bullet)
                 bullets_sprites.add(bullet)
 
-   shots = pygame.sprite.groupcollide(bullets_sprites, enemy_sprites, True, True)
+   shots = pygame.sprite.groupcollide(bullets_sprites, enemy_sprites, True, False)
    if shots:
         sprite = get_hit_sprite(shots)
-        sprite.snd_expl.play()
+        sprite.hp -= 30
+        if sprite.hp <= 0:
+            sprite.snd_expl.play()
+            expl = Explosion(sprite.rect.center)
+            all_sprites.add(expl)
+
+   scratch =  pygame.sprite.groupcollide(bullets_sprites, enemy_sprites, False, False)
+
    if scratch:
         sprite = get_hit_sprite(scratch)
         sprite.snd_scratch.play()
+        player.hp -= 1
+        if player.hp <=0:
+           run = False
 
    screen.fill(CYAN)
    all_sprites.draw(screen)
+   draw_hp(screen, 50, 50, player.hp, 200, 20)
    pygame.display.update()
+
 pygame.quit()
