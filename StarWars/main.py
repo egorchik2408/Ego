@@ -136,6 +136,7 @@ while run:
         if sprite.hp <= 0:
             sprite.snd_expl.play()
             expl = Explosion(sprite.rect.center)
+            sprite.kill()
             all_sprites.add(expl)
 
    scratch =pygame.sprite.groupcollide(bullets_sprites, enemy_sprites, False, False)
