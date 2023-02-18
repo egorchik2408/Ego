@@ -9,7 +9,7 @@ from tre import Tree
 from explosion import Explosion
 from auto_forward import Auto_forward
 from auto_back import Auto_back
-
+import time
 def get_hit_sprite(hits_dict):  # Функция возвращает спрайт с которым столкнулись
    for hit in hits_dict.values():
        return hit[0]
@@ -94,6 +94,9 @@ while run:
   for event in pygame.event.get():
     if event.type == pygame.QUIT:
       run = False
+      expl = Explosion(player.rect.center)  # Создаем взрыв на месте игрока
+      all_sprites.add(expl)
+
     if event.type == pygame.KEYDOWN: # Если клавиша нажата
       if event.key == pygame.K_SPACE:
         player.sound_shoot.play()
@@ -104,23 +107,30 @@ while run:
       if event.key == pygame.K_q:                       
           expl = Explosion([width/2,height/2])
           all_sprites.add(expl)
-  hit_boards = pygame.sprite.groupcollide(players,boards,False,False)
-  hit_cars = pygame.sprite.groupcollide(players,cars,False,False)
+  hit_boards = pygame.sprite.groupcollide(players, boards, False, False)
+
+  hit_cars = pygame.sprite.groupcollide(players, cars, False, False)
+
   hit_bullets = pygame.sprite.groupcollide(bullets, cars, True, False)
   if hit_bullets:
     car = get_hit_sprite(hit_bullets)
     car.sound.play()
+    expl = Explosion(player.rect.center)  # Создаем взрыв на месте игрока
+    all_sprites.add(expl)
     if car.type == 'forward':
         auto = Auto_forward()
         cars.add(auto)
         auto.sound.play()
         all_sprites.add(auto)
+        player.score += 10
     else:
         auto = Auto_back()
         cars.add(auto)
         auto.sound.play()
         all_sprites.add(auto)
+        player.score += 10
     car.kill()
+
   if hit_boards or hit_cars:
     player.speed = 0
     player.sound_bum.play()
@@ -131,6 +141,9 @@ while run:
       hit_another_car = pygame.sprite.spritecollide(car,cars,False)
       if hit_another_car:
         car.sound.play()
+        expl = Explosion(player.rect.center)  # Создаем взрыв на месте игрока
+        all_sprites.add(expl)
+
         if car.type == 'forward':
             auto = Auto_forward()
             cars.add(auto)
@@ -142,10 +155,18 @@ while run:
         car.kill()
       else:
         cars.add(car)
-        
+        end_time = time.time()  # Запоминаем время смерти игрока
+
   screen.fill(GREEN)
   all_sprites.draw(screen)
   draw_text(screen, r'Score = {player.score}', 50, 120, 20, GOLD)
+  if len(players) == 0:
+      draw_text(screen, 'Game Over', 100, width / 2, height / 2 - 50, WHITE)
+      draw_text(screen, f'Score = {player.score}', 100, width / 2, height / 2 + 50, WHITE)
+
+
+  if time.time() - end_time > 5 and len(players) == 0:
+    run = False
   pygame.display.update()
   
 pygame.quit()

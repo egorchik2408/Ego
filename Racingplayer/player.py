@@ -17,6 +17,7 @@ class Player(pygame.sprite.Sprite):
      self.max_speed = 50
      self.min_speed = 0
      self.speed = 0
+     self.score = 0
   def update(self):
     keystate = pygame.key.get_pressed()
     if keystate[pygame.K_RIGHT]:
